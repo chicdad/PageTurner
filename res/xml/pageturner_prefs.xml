@@ -164,7 +164,7 @@
      		android:key="font_weight"
             android:title="Font Weight"
             android:summary="Main font weight for text display"            
-        	android:defaultValue="normal"
+        	android:defaultValue="regular"
         	android:entries="@array/fontWeightLabels"
         	android:entryValues="@array/fontWeights" />
                     

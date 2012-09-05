@@ -319,7 +319,7 @@ public class Configuration {
 		default: fw = "-BoldItalic"; break;
 		}
 		
-		if ( cachedFamily != null && fontFace.equals( cachedFamily.getName() )) {
+		if ( cachedFamily != null && (fontFace+fw).equals( cachedFamily.getName() )) {
 			return cachedFamily;
 		}
     	
@@ -456,10 +456,6 @@ public class Configuration {
 	public FontWeight getFontWeight() {
 		String fw = settings.getString(KEY_FONT_WEIGHT, FontWeight.REGULAR.name().toLowerCase());
 		return FontWeight.valueOf(fw.toUpperCase());
-	}
-	
-	public void setFontWeight(FontWeight fw) {		
-        updateValue(KEY_FONT_WEIGHT, fw);    
 	}
 	
 }
