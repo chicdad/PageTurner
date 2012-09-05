@@ -106,8 +106,6 @@
     <string name="feed_failed">Could not contact the site. Please try again.</string>
     <string name="book_failed">Could not download the book. Please try again.</string>
 
-    <string name="browse">Browse...</string>
-    
     <string name="search_books">Search for books</string>
     <string name="enter_query">Please enter a search-term</string>
     <string name="buy_now">Buy now</string>

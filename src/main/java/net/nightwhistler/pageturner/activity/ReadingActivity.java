@@ -33,7 +33,6 @@ import net.nightwhistler.pageturner.animation.Animator;
 import net.nightwhistler.pageturner.animation.PageCurlAnimator;
 import net.nightwhistler.pageturner.animation.PageTimer;
 import net.nightwhistler.pageturner.animation.RollingBlindAnimator;
-import net.nightwhistler.pageturner.library.LibraryBook;
 import net.nightwhistler.pageturner.library.LibraryService;
 import net.nightwhistler.pageturner.sync.AccessException;
 import net.nightwhistler.pageturner.sync.BookProgress;
@@ -62,10 +61,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -87,8 +84,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -116,6 +111,7 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
 	public static final String EXTRA_MARGIN_BOTTOM = "EXTRA_MARGIN_BOTTOM";
 	public static final String EXTRA_MARGIN_RIGHT = "EXTRA_MARGIN_RIGHT";
 	
+	private static final int MIN_BRIGHTNESS = 5;
 	private static final Logger LOG = LoggerFactory.getLogger(ReadingActivity.class);
 	
 	@Inject	
@@ -161,7 +157,7 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
 	private String titleBase;
 		
 	private String fileName;
-	private int progressPercentage;
+	private double progressPercentage;
 	
 	private boolean oldBrightness = false;
 	private boolean oldStripWhiteSpace = false;
@@ -217,9 +213,10 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
         };           
         
         this.progressBar.setFocusable(true);
+        this.progressBar.setMax(10000);
         this.progressBar.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
         	
-        	private int seekValue;
+        	private double seekValue;
 			
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
@@ -233,7 +230,7 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if ( fromUser ) {
-					seekValue = progress;
+					seekValue = progress / 100d;
 					percentageField.setText(progress + "% ");
 				}
 			}
@@ -320,7 +317,7 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     }
     
     @Override
-    public void progressUpdate(int progressPercentage) {    	
+    public void progressUpdate(double progressPercentage) {    	
     	
     	//Work-around for calculation errors and weird values.
     	if ( progressPercentage < 0 || progressPercentage > 100 ) {
@@ -328,10 +325,10 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     	}
     	
     	this.progressPercentage = progressPercentage;
-    	percentageField.setText("" + progressPercentage + "%  ");
+    	percentageField.setText("" + (((int)(progressPercentage*1000))/1000d) + "%  ");
     	
-    	this.progressBar.setProgress(progressPercentage);
-    	this.progressBar.setMax(100);
+    	this.progressBar.setProgress((int) (progressPercentage * 100));
+    	this.progressBar.setMax(10000);
     }
     
     private void updateFromPrefs() {
@@ -464,8 +461,8 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
         	intent.putExtra(EXTRA_QUERY, word.toString()); //Search Query
         	intent.putExtra(EXTRA_FULLSCREEN, false); //
         	intent.putExtra(EXTRA_HEIGHT, 400); //400pixel, if you don't specify, fill_parent"
-        	intent.putExtra(EXTRA_GRAVITY, Gravity.BOTTOM);
-        	intent.putExtra(EXTRA_MARGIN_LEFT, 100);
+        	// intent.putExtra(EXTRA_GRAVITY, Gravity.BOTTOM);
+        	// intent.putExtra(EXTRA_MARGIN_LEFT, 100);
         	
         	if ( isIntentAvailable(this, intent)) {
         		MenuItem item = menu.add(getString(R.string.dictionary_lookup));
@@ -532,6 +529,7 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     }    
     
     private void setScreenBrightnessLevel( int level ) {
+    	if (level < MIN_BRIGHTNESS) return;
     	WindowManager.LayoutParams lp = getWindow().getAttributes();
 		lp.screenBrightness = (float) level / 100f;
 		getWindow().setAttributes(lp);
@@ -1158,8 +1156,8 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     	if ( config.isBrightnessControlEnabled() && value != 0 ) {
     		int baseBrightness = config.getBrightNess();
     		
-    		int brightnessLevel = Math.min(99, value + baseBrightness);
-			brightnessLevel = Math.max(1, brightnessLevel);
+    		int brightnessLevel = Math.min(99, value * 3 + baseBrightness);
+			brightnessLevel = Math.max(MIN_BRIGHTNESS, brightnessLevel);
 			
 			final int level = brightnessLevel;
 			

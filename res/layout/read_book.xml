@@ -37,6 +37,7 @@
         	android:orientation="vertical"        
         	android:layout_alignTop="@id/mainContainer"
         	android:visibility="gone"
+        	android:background="@color/translucent_black"
         	>   
         	    
          <TextView

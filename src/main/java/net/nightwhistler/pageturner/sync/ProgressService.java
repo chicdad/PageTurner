@@ -30,7 +30,7 @@ public interface ProgressService {
 	 * @param fileName
 	 * @param progress
 	 */
-	public void storeProgress( String fileName, int index, int progress, int percentage ) throws AccessException;
+	public void storeProgress( String fileName, int index, int progress, double progressPercentage ) throws AccessException;
 	
 	/**
 	 * Returns the progress, or -1 of it wasn't found.

@@ -112,7 +112,7 @@ public class LibraryDatabaseHelper extends SQLiteOpenHelper {
 		}
 	}
 	
-	public void updateLastRead( String fileName, int progress ) {
+	public void updateLastRead( String fileName, double progress ) {
 		
 		String whereClause = Field.file_name.toString() + " like ?";
 		String[] args = { "%" + fileName };

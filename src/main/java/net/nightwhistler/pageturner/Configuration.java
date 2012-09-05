@@ -62,6 +62,8 @@ public class Configuration {
 		 BY_LAST_READ, LAST_ADDED, UNREAD, BY_TITLE, BY_AUTHOR;
 	}	
 	
+	public static enum FontWeight {REGULAR, BOLD, ITALIC, BOLD_ITALIC}
+	
 	public static final String KEY_POS = "offset:";
 	public static final String KEY_IDX = "index:";
 	public static final String KEY_NAV_TAP_V = "nav_tap_v";
@@ -88,6 +90,7 @@ public class Configuration {
 	public static final String KEY_NIGHT_MODE = "night_mode";
 	public static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
 	public static final String KEY_FONT_FACE = "font_face";
+	public static final String KEY_FONT_WEIGHT = "font_weight";
 	
 	public static final String PREFIX_DAY = "day";
 	public static final String PREFIX_NIGHT = "night";
@@ -291,8 +294,8 @@ public class Configuration {
         editor.commit();    
 	}	
 	
-	private FontFamily loadFamilyFromAssets(String key, String baseName ) {
-		Typeface basic = Typeface.createFromAsset(context.getAssets(), baseName + ".otf");
+	private FontFamily loadFamilyFromAssets(String key, String baseName, String fontWeight ) {
+		Typeface basic = Typeface.createFromAsset(context.getAssets(), baseName + fontWeight + ".otf");
 		Typeface boldFace = Typeface.createFromAsset(context.getAssets(), baseName + "-Bold.otf");
 		Typeface italicFace = Typeface.createFromAsset(context.getAssets(), baseName + "-Italic.otf");
 		Typeface biFace = Typeface.createFromAsset(context.getAssets(), baseName + "-BoldItalic.otf");
@@ -307,30 +310,39 @@ public class Configuration {
 	
 	public FontFamily getFontFamily() {
 		
-		String fontFace = settings.getString(KEY_FONT_FACE, "gen_book_bas");   
+		String fontFace = settings.getString(KEY_FONT_FACE, "gen_book_bas");  
+		String fw = "";
+		switch (getFontWeight()) {
+		case REGULAR: fw = ""; break;
+		case BOLD: fw = "-Bold"; break;
+		case ITALIC: fw = "-Italic"; break;
+		default: fw = "-BoldItalic"; break;
+		}
 		
 		if ( cachedFamily != null && fontFace.equals( cachedFamily.getName() )) {
 			return cachedFamily;
 		}
     	
     	if ( "gen_book_bas".equals(fontFace) ) {
-    		return this.cachedFamily = loadFamilyFromAssets(fontFace, "GentiumBookBasic");    		
+    		return this.cachedFamily = loadFamilyFromAssets(fontFace+fw, "GentiumBookBasic", fw);    		
     	}
     	if ("gen_bas".equals(fontFace)) {
-    		return this.cachedFamily = loadFamilyFromAssets(fontFace, "GentiumBasic");    		
+    		return this.cachedFamily = loadFamilyFromAssets(fontFace+fw, "GentiumBasic", fw);    		
     	} 
     	
     	Typeface face = Typeface.SANS_SERIF;
-    	
     	if ("sans".equals(fontFace) ) {
     		face = Typeface.SANS_SERIF;
     	} else if ("serif".equals(fontFace)) {
     		face = Typeface.SERIF;
     	} else if ("mono".equals(fontFace)) {
     		face = Typeface.MONOSPACE;
-    	}  
+    	}
+    	if (getFontWeight()==FontWeight.BOLD) {
+    		face = Typeface.DEFAULT_BOLD;
+    	}
     	
-    	return this.cachedFamily = new FontFamily(fontFace, face);
+    	return this.cachedFamily = new FontFamily(fontFace+fw, face);
 	}
 	
 	public int getBrightNess() {
@@ -439,6 +451,15 @@ public class Configuration {
 	
 	public String getLibraryFolder() {
 		return getPageTurnerFolder() + "/Books";
+	}
+
+	public FontWeight getFontWeight() {
+		String fw = settings.getString(KEY_FONT_WEIGHT, FontWeight.REGULAR.name().toLowerCase());
+		return FontWeight.valueOf(fw.toUpperCase());
+	}
+	
+	public void setFontWeight(FontWeight fw) {		
+        updateValue(KEY_FONT_WEIGHT, fw);    
 	}
 	
 }

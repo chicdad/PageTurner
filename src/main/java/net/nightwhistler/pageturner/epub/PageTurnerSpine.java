@@ -310,7 +310,7 @@ public class PageTurnerSpine {
 	 * @param progressInPart
 	 * @return
 	 */
-	public int getProgressPercentage(double progressInPart) {		
+	public double getProgressPercentage(double progressInPart) {		
 		
 		if ( this.entries == null ) {
 			return -1;
@@ -328,7 +328,7 @@ public class PageTurnerSpine {
 		
 		double progress = uptoHere + (progressInPart * thisPart);
 		
-		return (int) (progress * 100);		
+		return progress * 100;		
 	}
 	
 	/**

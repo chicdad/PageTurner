@@ -36,6 +36,7 @@ import net.nightwhistler.htmlspanner.HtmlSpanner;
 import net.nightwhistler.htmlspanner.TagNodeHandler;
 import net.nightwhistler.htmlspanner.handlers.TableHandler;
 import net.nightwhistler.htmlspanner.spans.CenterSpan;
+import net.nightwhistler.pageturner.Configuration.FontWeight;
 import net.nightwhistler.pageturner.epub.PageTurnerSpine;
 import net.nightwhistler.pageturner.epub.ResourceLoader;
 import net.nightwhistler.pageturner.epub.ResourceLoader.ResourceCallback;
@@ -487,13 +488,13 @@ public class BookView extends ScrollView {
 		}
 	}	
 	
-	public void navigateToPercentage( int percentage ) {
+	public void navigateToPercentage( double seekValue ) {
 		
 		if ( spine == null ) {
 			return;
 		}
 		
-		double targetPoint = (double) percentage / 100d;
+		double targetPoint = (double) seekValue / 100d;
 		List<Double> percentages = this.spine.getRelativeSizes();
 				
 		if ( percentages == null || percentages.isEmpty() ) {
@@ -898,7 +899,7 @@ public class BookView extends ScrollView {
 				progressInPart = 1d;
 			}			
 			
-			int progress = spine.getProgressPercentage( progressInPart );
+			double progress = spine.getProgressPercentage( progressInPart );
 		
 			if ( progress != -1 ) {
 				for ( BookViewListener listener: this.listeners ) {
@@ -1044,5 +1045,7 @@ public class BookView extends ScrollView {
 			
 			parseEntryComplete(spine.getPosition(), this.name);
 		}
-	}	
+	}
+
+
 }

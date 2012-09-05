@@ -42,5 +42,19 @@
         <item>Droid Sans</item>
         <item>Droid Sans Mono</item>        
     </string-array>
+    
+    <string-array name="fontWeights">
+        <item>regular</item>
+        <item>bold</item>
+        <item>italic</item>
+        <item>bold_italic</item>
+    </string-array>
+    
+    <string-array name="fontWeightLabels">
+        <item>Regular</item>
+        <item>Bold</item>  
+        <item>Italic</item> 
+        <item>Bold Italic</item> 
+    </string-array>
  
 </resources>

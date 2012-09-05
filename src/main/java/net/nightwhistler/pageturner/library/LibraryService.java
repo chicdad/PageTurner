@@ -37,7 +37,7 @@ public interface LibraryService {
 	 */
 	public void storeBook( String fileName, Book book, boolean updateLastRead, boolean copyFile ) throws IOException;
 	
-	public void updateReadingProgress( String fileName, int progress );
+	public void updateReadingProgress( String fileName, double progressPercentage );
 	
 	public QueryResult<LibraryBook> findAllByLastRead();
 	

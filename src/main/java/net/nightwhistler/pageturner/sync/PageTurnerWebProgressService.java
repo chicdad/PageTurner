@@ -161,7 +161,7 @@ public class PageTurnerWebProgressService implements ProgressService {
 	}
 	
 	@Override
-	public void storeProgress(String fileName, int index, int progress, int percentage) {
+	public void storeProgress(String fileName, int index, int progress, double percentage) {
 				
 		if ( ! config.isSyncEnabled() ) {
 			return;
