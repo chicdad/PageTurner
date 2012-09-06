@@ -10,6 +10,7 @@
     <string name="profile_day">Switch to day mode</string>  
     <string name="profile_night">Switch to night mode</string>
     <string name="manual_sync">Sync reading progress</string>
+    <string name="manual_upload">Upload reading progress</string>
     <string name="prefs">Preferences</string>
     
     <string name="show_toc">Show TOC</string>   

@@ -112,6 +112,7 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
 	public static final String EXTRA_MARGIN_RIGHT = "EXTRA_MARGIN_RIGHT";
 	
 	private static final int MIN_BRIGHTNESS = 5;
+	private static final int ACCEL_BRIGHTNESS = 15;
 	private static final Logger LOG = LoggerFactory.getLogger(ReadingActivity.class);
 	
 	@Inject	
@@ -1014,6 +1015,10 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
         	new ManualProgressSync().execute();
         	return true;
         	
+        case R.id.manual_upload:
+        	this.storeProgress();
+        	return true;
+        	
         case R.id.preferences:
         	//Cache old settings to check if we'll need a restart later
         	oldBrightness = config.isBrightnessControlEnabled();
@@ -1156,7 +1161,11 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     	if ( config.isBrightnessControlEnabled() && value != 0 ) {
     		int baseBrightness = config.getBrightNess();
     		
-    		int brightnessLevel = Math.min(99, value * 3 + baseBrightness);
+    		// slow down when getting under ACCEL_BRIGHTNESS threshold
+    		int brightnessLevel = baseBrightness >= ACCEL_BRIGHTNESS ? 
+    				value * 3 + baseBrightness : value / 2 + baseBrightness;
+
+    		brightnessLevel = Math.min(99, brightnessLevel);
 			brightnessLevel = Math.max(MIN_BRIGHTNESS, brightnessLevel);
 			
 			final int level = brightnessLevel;
@@ -1286,6 +1295,23 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     	}
     }      
    
+    private void storeProgress() {
+    	if ( this.bookView != null ) {
+
+    		libraryService.updateReadingProgress(fileName, progressPercentage);			    		
+    		
+    		backgroundHandler.post(new Runnable() {
+    			@Override
+    			public void run() {
+    				try {
+    					progressService.storeProgress(fileName,
+    	    				bookView.getIndex(), bookView.getPosition(), 
+    	    				progressPercentage);
+    				} catch (AccessException a) {}
+    			}
+    		});
+    	}
+    }
     
     private class ManualProgressSync extends AsyncTask<Void, Integer, List<BookProgress>> {
     	

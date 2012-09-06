@@ -29,11 +29,11 @@ public class BookProgress {
 	private int progress;
 	
 	private Date timeStamp;
-	private int percentage;
+	private double percentage;
 	
 	private String deviceName;
 	
-	public BookProgress( String fileName, int index, int progress, int percentage,
+	public BookProgress( String fileName, int index, int progress, double percentage,
 			Date timeStamp, String deviceName ) {
 		this.fileName = fileName;
 		this.index = index;
@@ -59,7 +59,7 @@ public class BookProgress {
 		return deviceName;
 	}
 	
-	public int getPercentage() {
+	public double getPercentage() {
 		return percentage;
 	}
 	

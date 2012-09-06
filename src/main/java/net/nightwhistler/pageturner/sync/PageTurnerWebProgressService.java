@@ -136,7 +136,7 @@ public class PageTurnerWebProgressService implements ProgressService {
 				
 				int index = json.getInt("bookIndex");
 				int progress = json.getInt("progress");
-				int percentage = json.getInt("percentage");
+				double percentage = json.getInt("percentage")/1000d;
 				
 				Date timeStamp = dateFormat.parse( json.getString("storedOn") );
 				
@@ -184,7 +184,7 @@ public class PageTurnerWebProgressService implements ProgressService {
 			pairs.add(new BasicNameValuePair("progress", "" + progress ));
 			pairs.add(new BasicNameValuePair("title", Integer.toHexString( filePart.hashCode() )));
 			pairs.add(new BasicNameValuePair("deviceName", this.config.getDeviceName() ));
-			pairs.add(new BasicNameValuePair("percentage", "" + percentage ));
+			pairs.add(new BasicNameValuePair("percentage", "" + percentage*1000 ));
 			pairs.add(new BasicNameValuePair("userId", Integer.toHexString( this.config.getSynchronizationEmail().hashCode() )));
 			pairs.add(new BasicNameValuePair("accessKey", this.config.getSynchronizationAccessKey()));
 			
