@@ -76,6 +76,15 @@ public class NavGestureDetector	extends GestureDetector.SimpleOnGestureListener 
     	return false;    	        
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.view.GestureDetector.SimpleOnGestureListener#onDoubleTap(android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onDoubleTap(MotionEvent e) {
+    	this.bookViewListener.onScreenDoubleTap();	
+    	return false;    	 
+	}
+
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2,
 			float distanceX, float distanceY) {

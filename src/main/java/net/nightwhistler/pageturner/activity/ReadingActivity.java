@@ -1078,7 +1078,17 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     
     @Override
     public void onScreenTap() {
+    	stopAnimating();
     	
+    	if ( this.titleBarLayout.getVisibility() == View.VISIBLE ) {
+    		titleBarLayout.setVisibility(View.GONE);
+    		updateFromPrefs();
+    	}
+    	// move code to doubletap
+    }
+    
+    @Override
+    public void onScreenDoubleTap() {
     	stopAnimating();
     	
     	if ( this.titleBarLayout.getVisibility() == View.VISIBLE ) {

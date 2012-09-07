@@ -147,4 +147,12 @@ public interface BookViewListener {
 	 * when an edge is tapped.
 	 */
 	void onScreenTap();
+	
+	/**
+	 * Called when the user touches the screen.
+	 * 
+	 * This will always be called when the user taps the screen, even
+	 * when an edge is tapped.
+	 */
+	void onScreenDoubleTap();
 }
