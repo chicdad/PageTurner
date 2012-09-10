@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import roboguice.inject.ContextScoped;
 import android.content.Context;
+import android.widget.Toast;
 
 import com.google.inject.Inject;
 
@@ -161,7 +162,7 @@ public class PageTurnerWebProgressService implements ProgressService {
 	}
 	
 	@Override
-	public void storeProgress(String fileName, int index, int progress, double percentage) {
+	public void storeProgress(String fileName, int index, int progress, double percentage) throws AccessException {
 				
 		if ( ! config.isSyncEnabled() ) {
 			return;
@@ -198,8 +199,9 @@ public class PageTurnerWebProgressService implements ProgressService {
 			
 			LOG.debug("Got status " + response.getStatusLine().getStatusCode() + " from server.");
 			
-		} catch (Exception io) {	
-			LOG.error("Got error while POSTing update:", io);	
+		} catch (IOException io) {	
+			LOG.error("Got error while POSTing update:", io);
+			throw new AccessException( "Got IO error while POSTing update" );
 			//fail silently
 		}	
 		

@@ -24,24 +24,23 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 /**
- * Translates low-level touch and gesture events into more high-level
- * navigation events.
+ * Translates low-level touch and gesture events into more high-level navigation
+ * events.
  * 
  * @author Alex Kuiper
- *
+ * 
  */
-public class NavGestureDetector	extends GestureDetector.SimpleOnGestureListener {
+public class NavGestureDetector extends GestureDetector.SimpleOnGestureListener {
 
-	
-	//Distance to scroll 1 unit on edge slide.
+	// Distance to scroll 1 unit on edge slide.
 	private static final int SCROLL_FACTOR = 50;
-	
+
 	private BookViewListener bookViewListener;
 	private BookView bookView;
 	private DisplayMetrics metrics;
-		
-	public NavGestureDetector( BookView bookView, BookViewListener navListener, 
-			DisplayMetrics metrics ) {
+
+	public NavGestureDetector(BookView bookView, BookViewListener navListener,
+			DisplayMetrics metrics) {
 		this.bookView = bookView;
 		this.bookViewListener = navListener;
 		this.metrics = metrics;
@@ -49,98 +48,108 @@ public class NavGestureDetector	extends GestureDetector.SimpleOnGestureListener 
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		
-		//Links get preference
-		if ( bookView.hasLinkAt(e.getX(), e.getY())) {
+
+		// Links get preference
+		if (bookView.hasLinkAt(e.getX(), e.getY())) {
 			return false;
 		}
-		
-    	final int TAP_RANGE_H = bookView.getWidth() / 5;
-    	final int TAP_RANGE_V = bookView.getHeight() / 5;
-    	
-    	if ( e.getX() < TAP_RANGE_H ) {
-    		return bookViewListener.onTapLeftEdge();
-    	} else if (e.getX() > bookView.getWidth() - TAP_RANGE_H ) {
-    		return bookViewListener.onTapRightEdge();
-    	}
-    	    	
-    	int yBase = bookView.getScrollY();        	
-    	
-    	if ( e.getY() < TAP_RANGE_V + yBase ) {
-    		return bookViewListener.onTapTopEdge();
-    	} else if ( e.getY() > (yBase + bookView.getHeight()) - TAP_RANGE_V ) {
-    		return bookViewListener.onTopBottomEdge();	
-    	}
-    	
-    	this.bookViewListener.onScreenTap();	
-    	return false;    	        
+
+		final int TAP_RANGE_H = bookView.getWidth() / 5;
+		final int TAP_RANGE_V = bookView.getHeight() / 5;
+
+		if (e.getX() < TAP_RANGE_H) {
+			return bookViewListener.onTapLeftEdge();
+		} else if (e.getX() > bookView.getWidth() - TAP_RANGE_H) {
+			return bookViewListener.onTapRightEdge();
+		}
+
+		int yBase = bookView.getScrollY();
+
+		if (e.getY() < TAP_RANGE_V + yBase) {
+			return bookViewListener.onTapTopEdge();
+		} else if (e.getY() > (yBase + bookView.getHeight()) - TAP_RANGE_V) {
+			return bookViewListener.onTopBottomEdge();
+		}
+
+		this.bookViewListener.onScreenTap();
+		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see android.view.GestureDetector.SimpleOnGestureListener#onDoubleTap(android.view.MotionEvent)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.view.GestureDetector.SimpleOnGestureListener#onDoubleTap(android
+	 * .view.MotionEvent)
 	 */
 	@Override
 	public boolean onDoubleTap(MotionEvent e) {
-    	this.bookViewListener.onScreenDoubleTap();	
-    	return false;    	 
+		final int TAP_RANGE_H = bookView.getWidth() / 5;
+		final int TAP_RANGE_V = bookView.getHeight() / 5;
+		int yBase = bookView.getScrollY();
+		if (e.getX() > TAP_RANGE_H
+				&& e.getX() < bookView.getWidth() - TAP_RANGE_H
+				&& e.getY() > TAP_RANGE_V + yBase
+				&& e.getY() < (yBase + bookView.getHeight()) - TAP_RANGE_V) {
+			this.bookViewListener.onScreenDoubleTap();
+			return true;
+		}
+		return false;
 	}
 
 	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2,
-			float distanceX, float distanceY) {
-		
-		float scrollUnitSize = SCROLL_FACTOR * metrics.density;			
-		
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+
+		float scrollUnitSize = SCROLL_FACTOR * metrics.density;
+
 		final int TAP_RANGE_H = bookView.getWidth() / 5;
-		float delta = (e1.getY() - e2.getY()) / scrollUnitSize;			
+		float delta = (e1.getY() - e2.getY()) / scrollUnitSize;
 		int level = (int) delta;
-		
-		if ( e1.getX() < TAP_RANGE_H ) {			
+
+		if (e1.getX() < TAP_RANGE_H) {
 			return this.bookViewListener.onLeftEdgeSlide(level);
-		} else if ( e1.getX() > bookView.getWidth() - TAP_RANGE_H ) {
-			
+		} else if (e1.getX() > bookView.getWidth() - TAP_RANGE_H) {
+
 			return this.bookViewListener.onRightEdgeSlide(level);
-		}		
-		
+		}
+
 		return super.onScroll(e1, e2, distanceX, distanceY);
 	}
-	
 
-	
 	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {	
-				
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+
 		float distanceX = e2.getX() - e1.getX();
 		float distanceY = e2.getY() - e1.getY();
-	
-		if (  Math.abs(distanceX) > Math.abs(distanceY) ) {
 
-			if ( distanceX > 0 ) {
+		if (Math.abs(distanceX) > Math.abs(distanceY)) {
+
+			if (distanceX > 0) {
 				return bookViewListener.onSwipeRight();
 			} else {
-				return bookViewListener.onSwipeLeft();				
-			}			
+				return bookViewListener.onSwipeLeft();
+			}
 
-		} else if (Math.abs(distanceY) > Math.abs(distanceX) ) {
-			if ( distanceY > 0 ) {
+		} else if (Math.abs(distanceY) > Math.abs(distanceX)) {
+			if (distanceY > 0) {
 				return bookViewListener.onSwipeUp();
 			} else {
 				return bookViewListener.onSwipeDown();
-			}			
+			}
 		}
 
 		return false;
 	}
-	
-	
-	@Override
-    public void onLongPress(MotionEvent e) {
-    	CharSequence word = bookView.getWordAt(e.getX(), e.getY() );
-    	
-    	if ( word != null ) {
-    		bookViewListener.onWordLongPressed(word);
-    	}
-    }     
 
+	@Override
+	public void onLongPress(MotionEvent e) {
+		CharSequence word = bookView.getWordAt(e.getX(), e.getY());
+
+		if (word != null) {
+			bookViewListener.onWordLongPressed(word);
+		}
+	}
 
 }

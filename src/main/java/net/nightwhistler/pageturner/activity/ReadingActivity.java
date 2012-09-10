@@ -1016,7 +1016,7 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
         	return true;
         	
         case R.id.manual_upload:
-        	this.storeProgress();
+        	this.manualStoreProgress();
         	return true;
         	
         case R.id.preferences:
@@ -1305,23 +1305,28 @@ public class ReadingActivity extends RoboActivity implements BookViewListener {
     	}
     }      
    
-    private void storeProgress() {
-    	if ( this.bookView != null ) {
+	private void manualStoreProgress() {
+		if (this.bookView != null) {
 
-    		libraryService.updateReadingProgress(fileName, progressPercentage);			    		
-    		
-    		backgroundHandler.post(new Runnable() {
-    			@Override
-    			public void run() {
-    				try {
-    					progressService.storeProgress(fileName,
-    	    				bookView.getIndex(), bookView.getPosition(), 
-    	    				progressPercentage);
-    				} catch (AccessException a) {}
-    			}
-    		});
-    	}
-    }
+			libraryService.updateReadingProgress(fileName, progressPercentage);
+			this.runOnUiThread(new Runnable() { // run on this thread to show toast
+				@Override
+				public void run() {
+					try {
+						progressService.storeProgress(fileName,
+								bookView.getIndex(), bookView.getPosition(),
+								progressPercentage);
+					} catch (AccessException a) {
+						showToast(a.getMessage());
+					}
+				}
+			});
+		}
+	}
+	
+	private void showToast(String msg) {
+	    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+	}
     
     private class ManualProgressSync extends AsyncTask<Void, Integer, List<BookProgress>> {
     	
